@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<sdf version="1.9">
+  <model name="dark_red_ball">
+    <static>true</static>
+    <link name="ball_link">
+      <collision name="ball_collision">
+        <geometry>
+          <sphere>
+            <radius>0.10</radius>
+          </sphere>
+        </geometry>
+      </collision>
+      <visual name="ball_visual">
+        <geometry>
+          <sphere>
+            <radius>0.10</radius>
+          </sphere>
+        </geometry>
+        <material>
+          <ambient>0.35 0 0 1</ambient>
+          <diffuse>0.45 0 0 1</diffuse>
+          <specular>0.08 0.02 0.02 1</specular>
+        </material>
+      </visual>
+    </link>
+  </model>
+</sdf>

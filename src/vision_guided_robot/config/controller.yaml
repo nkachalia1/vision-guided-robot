@@ -1,0 +1,26 @@
+visual_servo:
+  ros__parameters:
+    use_sim_time: true
+    target_topic: "/ball/relative_position"
+    cmd_vel_topic: "/cmd_vel_raw"
+    state_topic: "/visual_servo/state"
+    safety_state_topic: "/safety/state"
+    control_rate_hz: 20.0
+    target_timeout_s: 0.6
+    stop_hold_time_s: 1.5
+    track_angle_threshold_rad: 0.18
+    search_sweep_period_s: 3.0
+    recover_timeout_s: 0.1
+    post_avoid_recover_time_s: 0.1
+
+    stop_distance_m: 0.45
+    distance_tolerance_m: 0.04
+    stop_lateral_tolerance_m: 0.06
+
+    linear_kp: 1.0
+    angular_kp: 2.2
+    max_linear_speed_mps: 1.2
+    max_angular_speed_radps: 1.8
+    alignment_slowdown_angle_rad: 0.7
+    search_angular_speed_radps: 0.85
+    recover_angular_speed_radps: 0.35

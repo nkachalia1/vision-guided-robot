@@ -1,0 +1,58 @@
+waypoint_driver:
+  ros__parameters:
+    use_sim_time: true
+    odom_topic: "/odom"
+    goal_pose_topic: "/goal_pose"
+    planned_path_topic: "/planned_path"
+    cmd_vel_topic: "/cmd_vel_raw"
+    state_topic: "/waypoint/state"
+    progress_topic: "/waypoint/progress"
+    mission_state_topic: "/mission/state"
+    safety_state_topic: "/safety/state"
+    scan_topic: "/scan"
+    control_rate_hz: 20.0
+
+    accept_direct_goal_pose: true
+    start_with_parameter_goal: true
+    waypoints_text: ""
+    loop_waypoints: false
+    waypoint_hold_time_s: 0.5
+    blocked_timeout_s: 8.0
+    stuck_timeout_s: 10.0
+    stuck_min_progress_m: 0.10
+    safety_oscillation_max_interruptions: 2
+    safety_oscillation_window_s: 8.0
+    enable_rerouting: true
+    max_detour_attempts_per_goal: 2
+    detour_forward_offset_m: 0.60
+    detour_lateral_offset_m: 1.00
+    detour_scan_sector_angle_rad: 1.20
+    goal_x_m: 2.0
+    goal_y_m: 0.0
+    goal_yaw_rad: 0.0
+    use_final_yaw: false
+
+    goal_tolerance_m: 0.10
+    heading_tolerance_rad: 0.12
+    final_yaw_tolerance_rad: 0.12
+
+    linear_kp: 1.1
+    angular_kp: 2.2
+    max_linear_speed_mps: 0.9
+    max_angular_speed_radps: 1.8
+
+    path_following_mode: "waypoint"
+    path_lookahead_distance_m: 0.45
+    path_heading_slowdown_angle_rad: 1.0
+    path_stop_heading_error_rad: 1.45
+
+    planner_state_topic: "/planner/state"
+    clear_costmap_topic: "/planner/clear_costmap"
+    recovery_trigger_topic: "/recovery/trigger"
+    enable_recovery_behavior: true
+    recovery_max_attempts: 2
+    recovery_backup_time_s: 0.8
+    recovery_backup_speed_mps: 0.20
+    recovery_rotate_time_s: 1.2
+    recovery_rotate_speed_radps: 0.85
+    recovery_replan_wait_time_s: 1.0

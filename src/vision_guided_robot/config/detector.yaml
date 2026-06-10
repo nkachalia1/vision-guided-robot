@@ -1,0 +1,28 @@
+ball_tracker:
+  ros__parameters:
+    use_sim_time: true
+    image_topic: "/camera/image"
+    target_topic: "/ball/relative_position"
+    annotated_image_topic: "/ball/annotated_image"
+    camera_frame: "camera_optical_frame"
+    publish_annotated_image: true
+    detector_backend: "hsv"
+    detector_model_path: ""
+    detector_class_names_path: ""
+    detector_target_class_names: "sports ball"
+    detector_confidence_threshold: 0.25
+    detector_nms_threshold: 0.45
+    detector_input_size_px: 640
+
+    min_area_px: 150.0
+    min_circularity: 0.55
+    real_diameter_m: 0.20
+    horizontal_fov_rad: 1.047
+
+    blur_kernel_size: 5
+    morph_kernel_size: 5
+
+    lower_red_1: [0, 90, 80]
+    upper_red_1: [10, 255, 255]
+    lower_red_2: [170, 90, 80]
+    upper_red_2: [180, 255, 255]

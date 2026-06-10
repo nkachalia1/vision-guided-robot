@@ -1,0 +1,55 @@
+# ROS 2 build artifacts
+build/
+install/
+log/
+.colcon/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# IDE and OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Gazebo runtime noise
+*.log
+*.db
+*.sqlite
+
+# ROS bags and runtime captures
+bags/
+maps/
+*.db3
+*.mcap
+
+# Local datasets, detector outputs, and generated debug images
+datasets/
+detector_eval/
+webcam_debug/
+debug_live_camera/
+calibration_images/
+
+# Local ML training outputs and model weights
+runs/
+models/ml/
+*.pt
+*.onnx
+
+# Local generated videos/screenshots
+*.mp4
+*.avi
+*.mov

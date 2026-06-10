@@ -1,0 +1,42 @@
+grid_planner:
+  ros__parameters:
+    use_sim_time: true
+    odom_topic: "/odom"
+    goal_pose_topic: "/goal_pose"
+    scan_topic: "/scan"
+    clear_costmap_topic: "/planner/clear_costmap"
+    path_topic: "/planned_path"
+    map_topic: "/planning/occupancy_grid"
+    state_topic: "/planner/state"
+    frame_id: "odom"
+    publish_rate_hz: 2.0
+
+    start_with_parameter_goal: true
+    goal_x_m: 2.0
+    goal_y_m: 0.8
+
+    map_origin_x_m: -1.0
+    map_origin_y_m: -2.0
+    map_width_m: 5.0
+    map_height_m: 4.0
+    map_resolution_m: 0.10
+    inflation_radius_m: 0.25
+
+    # Format: center_x,center_y,size_x,size_y;...
+    # Matches the default occluder wall spawned by demo_planned.launch.py.
+    obstacle_rectangles_text: "1.2,0.4,0.10,0.80"
+
+    use_scan_obstacles: false
+    require_scan_for_planning: false
+    replan_on_scan_change: false
+    replan_when_path_blocked: true
+    replan_cooldown_s: 2.0
+    keep_last_scan_map: true
+    persistent_scan_map: false
+    scan_memory_time_s: 12.0
+    scan_obstacle_inflation_radius_m: 0.25
+    scan_max_range_m: 4.0
+    scan_min_range_m: 0.12
+    scan_sample_stride: 2
+    lidar_offset_x_m: 0.16
+    lidar_offset_y_m: 0.0
