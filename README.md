@@ -122,6 +122,8 @@ Start here:
 - [docs/navigation_final_report.md](docs/navigation_final_report.md) for the final custom-vs-Nav2 navigation summary.
 - [docs/map_localization.md](docs/map_localization.md) for saved-map AMCL localization and `map`-frame Nav2 goals.
 - [docs/nav2_amcl_wall_passing.md](docs/nav2_amcl_wall_passing.md) for the harder map-frame wall-passing experiment.
+- [docs/slam_mapping.md](docs/slam_mapping.md) for SLAM Toolbox mapping, saving/padding a robot-built map, and navigating on it with AMCL.
+- [docs/autonomous_exploration.md](docs/autonomous_exploration.md) for first-pass frontier exploration with SLAM and Nav2.
 - [docs/interview_review.md](docs/interview_review.md) for startup-interview-style review questions.
 
 ## Core Robotics Ideas
@@ -147,6 +149,8 @@ Start here:
 - Live scan planning projects lidar hits into the odom grid so the planner can use sensed obstacles instead of only hardcoded rectangles.
 - Nav2 comparison shows how a production ROS 2 navigation stack organizes costmaps, planners, controllers, behavior trees, and lifecycle nodes.
 - AMCL connects a saved map to live odometry by estimating the `map -> odom` transform.
+- SLAM Toolbox builds an occupancy map from live lidar scans and robot motion.
+- Frontier exploration turns the live SLAM map into autonomous Nav2 goals at the boundary between known free space and unknown space.
 - RViz path and footprint displays make odometry drift and robot clearance easier to inspect.
 
 ## Official References

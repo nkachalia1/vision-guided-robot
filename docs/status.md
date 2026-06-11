@@ -18,6 +18,8 @@ The harder map-frame wall-passing goal is now validated with an endpoint caveat.
 
 The final portfolio wrap-up is now in progress. The SLAM-generated map has been validated with AMCL and fast Nav2: SLAM Toolbox produced a live map from `/scan`, the map was saved and padded, AMCL localized on that robot-built map, and Nav2 drove a farther map-frame goal using the fast profile.
 
+Autonomous exploration is now validated. The `frontier_explorer` node reads the live SLAM `/map`, detects frontier clusters between known free cells and unknown cells, scores candidate goals, and sends one frontier goal at a time to Nav2. `bags/final_frontier_exploration` recorded 3 explorer goals, 2 `GOAL_SUCCEEDED` transitions, 251 map samples, a final map size of `269x242 @ 0.050 m/px`, and `explorer_success: True`.
+
 Recorded and analyzed validation bags:
 
 1. `bags/final_vision_approach`
@@ -46,6 +48,7 @@ Recorded and analyzed validation bags:
 24. `bags/final_nav2_amcl_wall_pass_success`
 25. `bags/final_slam_mapping_first_run`
 26. `bags/final_slam_map_amcl_fast_run2`
+27. `bags/final_frontier_exploration`
 
 ## Current System
 
@@ -94,6 +97,7 @@ The project is a ROS 2 + Gazebo simulation for a differential-drive robot with:
 - SLAM Toolbox mapping scaffold for live `/scan` to `/map` mapping
 - saved SLAM-generated map artifact: `maps/slam/slam_two_wall_map.yaml` and `maps/slam/slam_two_wall_map.pgm`
 - launch shortcut for robot-built-map navigation: `demo_nav2_slam_map.launch.py`
+- validated frontier exploration for autonomous SLAM mapping: `frontier_explorer` and `demo_slam_explore.launch.py`
 - portfolio summary: `docs/project_portfolio.md`
 
 The main command path is:
@@ -157,6 +161,7 @@ The controller can be either:
 | Save SLAM-generated map | Done | `maps/slam/slam_two_wall_map.pgm` and `maps/slam/slam_two_wall_map.yaml` created in the WSL workspace. |
 | AMCL on SLAM-generated map | Validated | `bags/final_slam_map_amcl_fast_run2`: `map_size: 148x153 @ 0.050 m/px`, `amcl_pose_samples: 20`, `nav2_plan_samples: 29`, `odom_displacement_m: 0.953`, `max_linear_mps: 0.818`, `final_map_base_xy_m: (0.992, -0.489)`, `nav2_goal_error_m: 0.236`, `success: True`. |
 | Robot-built-map launch shortcut | Added | `demo_nav2_slam_map.launch.py` wraps the validated AMCL launch with `slam_two_wall_map_padded.yaml` and `nav2_map_wall_pass_params.yaml` defaults. Copy the generated map pair into `src/vision_guided_robot/maps/` before building. |
+| Autonomous frontier exploration | Validated | `bags/final_frontier_exploration`: `explorer_goal_samples: 3`, `GOAL_SUCCEEDED: 2`, `map_samples: 251`, `map_size: 269x242 @ 0.050 m/px`, `max_linear_mps: 1.500`, `max_angular_radps: 2.800`, `explorer_success: True`, `success: True`. |
 | Portfolio wrap-up | Done | `docs/project_portfolio.md` summarizes the final architecture, demo commands, validation evidence, engineering choices, limitations, and next extensions. |
 
 ## Tuned Defaults
@@ -240,9 +245,9 @@ For vision bags, success means the final target estimate is centered, close to s
 
 ## Next Milestones
 
-1. Copy `maps/slam/slam_two_wall_map_padded.yaml/.pgm` into `src/vision_guided_robot/maps/` and rebuild.
-2. Run `demo_nav2_slam_map.launch.py` and record one shortcut-validation bag.
-3. Review `docs/project_portfolio.md` and use it as the top-level project presentation artifact.
+1. Commit the autonomous exploration milestone.
+2. Add failed-frontier blacklisting so the explorer does not revisit goals that stall or fail.
+3. Add map-quality metrics such as explored area over time.
 
 ## Resume Commands
 
@@ -310,6 +315,15 @@ cd ~/vision_guided_robot_ws
 source /opt/ros/humble/setup.bash
 source install/setup.bash
 ros2 launch vision_guided_robot demo_nav2_slam_map.launch.py rviz:=true
+```
+
+Autonomous SLAM exploration mode:
+
+```bash
+cd ~/vision_guided_robot_ws
+source /opt/ros/humble/setup.bash
+source install/setup.bash
+ros2 launch vision_guided_robot demo_slam_explore.launch.py rviz:=true max_goals:=4
 ```
 
 ONNX vision mode:

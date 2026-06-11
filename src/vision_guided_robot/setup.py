@@ -45,6 +45,7 @@ setup(
             "safety_filter = vision_guided_robot.safety_filter_node:main",
             "waypoint_driver = vision_guided_robot.waypoint_driver_node:main",
             "grid_planner = vision_guided_robot.grid_planner_node:main",
+            "frontier_explorer = vision_guided_robot.frontier_explorer_node:main",
             "robot_visualization = vision_guided_robot.robot_visualization_node:main",
             "webcam_detector = vision_guided_robot.webcam_detector:main",
             "distance_calibrator = vision_guided_robot.distance_calibrator:main",

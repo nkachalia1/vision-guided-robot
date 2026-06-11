@@ -20,6 +20,7 @@ Gazebo -> ROS 2 sensors -> perception/planning/localization -> velocity control 
 - Saved-map localization with AMCL.
 - SLAM Toolbox mapping from `/scan`.
 - Navigation on a robot-built map using AMCL and fast Nav2.
+- Validated first-pass frontier exploration for autonomous SLAM goal generation.
 - Repeatable rosbag analysis for objective validation.
 
 ## Final Architecture
@@ -166,6 +167,7 @@ ros2 launch vision_guided_robot demo_nav2_slam_map.launch.py rviz:=true
 | AMCL wall passing | `bags/final_nav2_amcl_wall_pass_success` | `/navigate_through_poses` succeeded through constrained route |
 | SLAM live mapping | `bags/final_slam_mapping_first_run` | `map_samples: 233`, Nav2 succeeded on live map |
 | Robot-built map navigation | `bags/final_slam_map_amcl_fast_run2` | AMCL localized on saved SLAM map; fast Nav2 succeeded |
+| Autonomous frontier exploration | `bags/final_frontier_exploration` | 3 explorer goals, 2 `GOAL_SUCCEEDED` transitions, map grew to `269x242`, `explorer_success: True` |
 
 ## Key Engineering Choices
 
@@ -210,11 +212,11 @@ The most important behavior contracts are:
 - The custom planner is educational, not a production replacement for Nav2.
 - Some Nav2 wall-passing success uses staged waypoints and relaxed endpoint tolerance.
 - SLAM maps may need padding or cleanup before they are good navigation maps.
-- There is no autonomous exploration policy yet; the robot is manually driven while mapping.
+- The autonomous exploration policy is a first-pass frontier heuristic; it does not yet blacklist failed frontiers or optimize map coverage over time.
 
 ## Best Next Extensions
 
-1. Add autonomous exploration for SLAM mapping.
+1. Add failed-frontier blacklisting and exploration progress metrics.
 2. Add map quality checks and automatic map padding/cleanup.
 3. Add a real robot hardware profile.
 4. Add camera calibration and better metric target localization.
