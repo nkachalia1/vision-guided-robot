@@ -53,3 +53,13 @@ models/ml/
 *.mp4
 *.avi
 *.mov
+*.webm
+
+# Curated GitHub showcase media
+!media/
+!media/*.gif
+!media/*.png
+!media/*.jpg
+!media/*.jpeg
+!media/*.mp4
+!media/*.webm

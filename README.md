@@ -1,163 +1,204 @@
-# Vision Guided Robot
+# Vision-Guided Robot
 
-A learning-first ROS 2 project for a simulated differential-drive robot that uses a camera to find, track, and approach a red ball in Gazebo.
+A ROS 2 + Gazebo robotics project that grows from simple camera-based object tracking into a full simulated mobile-robot stack with perception, control, obstacle avoidance, path planning, Nav2, AMCL localization, SLAM, and autonomous frontier exploration.
 
-The first goal is intentionally simple: build the full robotics loop before adding machine learning.
+This project was built as a learning-first robotics portfolio: every major capability has code, launch files, documentation, and rosbag-based validation evidence.
 
-```mermaid
-flowchart LR
-    Gazebo["Gazebo world"]
-    Camera["Simulated RGB camera"]
-    Bridge["ros_gz_bridge"]
-    Perception["ball_tracker node<br/>detector backend"]
-    Control["visual_servo node<br/>proportional controller"]
-    Drive["Gazebo DiffDrive system"]
+## Demo Preview
 
-    Gazebo --> Camera
-    Camera --> Bridge
-    Bridge -->|/camera/image| Perception
-    Perception -->|/ball/relative_position| Control
-    Control -->|/cmd_vel| Bridge
-    Bridge --> Drive
-    Drive --> Gazebo
-```
-
-## Target Stack
-
-- Python
-- ROS 2 Humble
-- Gazebo Harmonic or newer
-- `ros_gz_sim` and `ros_gz_bridge`
-- OpenCV
-- No hardware required
-
-Gazebo Classic is intentionally avoided because modern ROS 2/Gazebo projects use the `ros_gz` bridge and Gazebo Sim stack.
-
-## Repository Layout
+Recommended GitHub demo clip:
 
 ```text
-.
-|-- README.md
-|-- docs/
-|   |-- architecture.md
-|   |-- file_guide.md
-|   |-- interview_review.md
-|   |-- issues.md
-|   `-- roadmap.md
-|-- pyproject.toml
-|-- requirements-dev.txt
-`-- src/
-    `-- vision_guided_robot/
-        |-- config/
-        |-- launch/
-        |-- models/
-        |-- test/
-        |-- vision_guided_robot/
-        |-- worlds/
-        |-- package.xml
-        |-- setup.cfg
-        `-- setup.py
+Gazebo + RViz showing SLAM map growth, frontier goals, and the robot navigating autonomously.
 ```
 
-See [docs/file_guide.md](docs/file_guide.md) for an explanation of every file.
+Add the final GIF/video under `media/` using [docs/github_showcase.md](docs/github_showcase.md). Until then, the fastest way to try the current headline demo is:
 
-## Build And Run
+```bash
+ros2 launch vision_guided_robot demo_slam_explore.launch.py \
+  rviz:=true \
+  max_goals:=6 \
+  goal_cooldown_s:=0.2 \
+  max_goal_distance_m:=4.5 \
+  distance_weight:=0.5
+```
 
-From this repository root on a ROS 2 machine:
+## What It Demonstrates
+
+- Differential-drive robot simulation in Gazebo
+- ROS 2 topics, launch files, TF, odometry, lidar, camera, and RViz
+- OpenCV HSV red-ball detection and custom YOLO11n ONNX detection
+- Visual servoing to approach and stop near a colored object
+- Lidar-based safety filtering and obstacle avoidance
+- Custom waypoint navigation, A* planning, path following, persistent costmap memory, and recovery
+- Nav2 integration with planners, controllers, costmaps, behavior actions, and lifecycle nodes
+- AMCL localization on a saved map
+- SLAM Toolbox mapping from live `/scan`
+- Autonomous frontier exploration using the live SLAM map
+- Repeatable validation with rosbag analysis
+
+## Quick Results
+
+| Capability | Evidence | Result |
+| --- | --- | --- |
+| Camera target approach | `bags/final_vision_approach` | HSV detector centered and stopped near the ball |
+| Custom ONNX detector | `bags/final_onnx_far_improved` | YOLO11n ONNX drove from `1.788 m` to stop |
+| Custom path planning | `bags/final_persistent_costmap_planner` | Planned path followed to goal with persistent obstacle memory |
+| Nav2 navigation | `bags/final_nav2_tight_goal` | Nav2 reached goal within `0.118 m` |
+| AMCL localization | `bags/final_nav2_amcl_clear_goal` | Map-frame goal succeeded with `/amcl_pose` |
+| SLAM mapping | `bags/final_slam_mapping_first_run` | Live map published 233 samples and Nav2 succeeded |
+| Robot-built map navigation | `bags/final_slam_map_amcl_fast_run2` | AMCL + fast Nav2 succeeded on saved SLAM map |
+| Frontier exploration | `bags/final_frontier_exploration` | 3 goals sent, 2 succeeded, map grew to `269x242` |
+
+See [docs/project_portfolio.md](docs/project_portfolio.md) for the full portfolio report.
+
+## Architecture
+
+```mermaid
+flowchart TB
+    Gazebo["Gazebo simulation<br/>robot, ball, walls, sensors"]
+    Bridge["ros_gz_bridge"]
+    Camera["/camera/image"]
+    Lidar["/scan"]
+    Odom["/odom and /tf"]
+    Perception["ball_tracker<br/>HSV or ONNX"]
+    VisualServo["visual_servo"]
+    CustomNav["custom planner<br/>waypoint + A* + recovery"]
+    SLAM["SLAM Toolbox<br/>/map and map -> odom"]
+    Nav2["Nav2<br/>planner, controller, BT, behaviors"]
+    Explorer["frontier_explorer"]
+    Cmd["/cmd_vel"]
+
+    Gazebo --> Bridge
+    Bridge --> Camera
+    Bridge --> Lidar
+    Bridge --> Odom
+    Camera --> Perception
+    Perception --> VisualServo
+    Lidar --> CustomNav
+    Odom --> CustomNav
+    Lidar --> SLAM
+    Odom --> SLAM
+    SLAM --> Nav2
+    SLAM --> Explorer
+    Explorer --> Nav2
+    VisualServo --> Cmd
+    CustomNav --> Cmd
+    Nav2 --> Cmd
+    Cmd --> Bridge
+    Bridge --> Gazebo
+```
+
+## Run The Project
+
+From the repository root on Ubuntu 22.04 with ROS 2 Humble:
 
 ```bash
 source /opt/ros/humble/setup.bash
 rosdep install --from-paths src --ignore-src -r -y
 colcon build --symlink-install
 source install/setup.bash
-ros2 launch vision_guided_robot sim.launch.py
 ```
 
-Expected behavior:
+Headline autonomous exploration demo:
 
-1. Gazebo opens with a small differential-drive robot and a red ball.
-2. The camera image is bridged into ROS 2 on `/camera/image`.
-3. `ball_tracker` detects the ball and publishes `/ball/relative_position`.
-4. `visual_servo` publishes `/cmd_vel`.
-5. The robot turns toward the ball, drives forward, and stops near it.
+```bash
+ros2 launch vision_guided_robot demo_slam_explore.launch.py rviz:=true max_goals:=6
+```
 
-## Local Python Tests
+Object approach demo:
 
-The detector and controller are written so their core logic can be tested without ROS:
+```bash
+ros2 launch vision_guided_robot demo_hsv.launch.py
+```
+
+Custom ONNX detector demo:
+
+```bash
+ros2 launch vision_guided_robot demo_onnx.launch.py
+```
+
+Nav2 on robot-built map:
+
+```bash
+ros2 launch vision_guided_robot demo_nav2_slam_map.launch.py rviz:=true
+```
+
+## Repository Tour
+
+Start here if you are reviewing the project:
+
+- [docs/project_portfolio.md](docs/project_portfolio.md): polished project summary, architecture, evidence, and limitations
+- [docs/github_showcase.md](docs/github_showcase.md): how to record and publish a GitHub demo clip
+- [docs/status.md](docs/status.md): completed milestones and validation bags
+- [docs/autonomous_exploration.md](docs/autonomous_exploration.md): frontier exploration implementation and validation
+- [docs/slam_mapping.md](docs/slam_mapping.md): SLAM Toolbox mapping and robot-built-map navigation
+- [docs/navigation_final_report.md](docs/navigation_final_report.md): custom navigation vs Nav2 comparison
+- [docs/ml_detector_comparison.md](docs/ml_detector_comparison.md): HSV vs ONNX detector comparison
+- [docs/architecture.md](docs/architecture.md): ROS 2 architecture and node responsibilities
+- [docs/issues.md](docs/issues.md): GitHub-style learning curriculum
+
+Important code paths:
+
+```text
+src/vision_guided_robot/vision_guided_robot/
+  ball_tracker_node.py          # camera perception ROS node
+  red_ball_detector.py          # OpenCV HSV detector
+  yolo_onnx_detector.py         # custom ONNX detector backend
+  visual_servo_node.py          # camera target approach controller
+  safety_filter_node.py         # lidar safety layer
+  grid_planner_node.py          # educational A* planner wrapper
+  waypoint_driver_node.py       # waypoint/path follower and recovery
+  frontier_explorer_node.py     # autonomous exploration goal generator
+
+src/vision_guided_robot/launch/
+  demo_hsv.launch.py
+  demo_onnx.launch.py
+  demo_live_planned.launch.py
+  demo_nav2_slam_map.launch.py
+  demo_slam_explore.launch.py
+```
+
+## Validation Workflow
+
+Most milestones were recorded as ROS bags and summarized with:
+
+```bash
+python3 tools/analyze_bag.py bags/final_frontier_exploration
+```
+
+Example final frontier-exploration result:
+
+```text
+explorer_goal_samples: 3
+map_samples: 251
+map_size: 269x242 @ 0.050 m/px
+max_linear_mps: 1.500
+max_angular_radps: 2.800
+explorer_state_counts:
+  GOAL_SUCCEEDED: 2
+  NAVIGATING: 32
+  SENDING_GOAL: 3
+explorer_success: True
+success: True
+```
+
+## Tests
+
+Core robotics and perception logic is tested outside ROS where possible:
 
 ```bash
 python -m pip install -r requirements-dev.txt
 python -m pytest
 ```
 
-The ROS nodes wrap that testable core logic in subscriptions, publishers, parameters, and launch files.
+## Known Limitations
 
-## Learning Path
-
-Start here:
-
-- [docs/project_portfolio.md](docs/project_portfolio.md) for the final portfolio-style project summary, architecture, demos, validation evidence, and limitations.
-- [docs/status.md](docs/status.md) for what is done, what remains, and final validation commands.
-- [docs/final_demo_report.md](docs/final_demo_report.md) for one-command HSV and ONNX demos plus the final comparison table.
-- [docs/roadmap.md](docs/roadmap.md) for milestones, weekly plan, and required skills.
-- [docs/issues.md](docs/issues.md) for GitHub-style tickets ordered from beginner to advanced.
-- [docs/architecture.md](docs/architecture.md) for the robotics and ROS architecture.
-- [docs/experiments.md](docs/experiments.md) for repeatable ball-position trials.
-- [docs/controller_tuning.md](docs/controller_tuning.md) for comparing controller gains and speed limits.
-- [docs/perception_robustness.md](docs/perception_robustness.md) for detector stress tests.
-- [docs/webcam_perception.md](docs/webcam_perception.md) for real-camera perception practice.
-- [docs/detector_evaluation.md](docs/detector_evaluation.md) for saved-image detector benchmarking.
-- [docs/distance_calibration.md](docs/distance_calibration.md) for calibrating detector pixel size into metric distance.
-- [docs/dataset_prep.md](docs/dataset_prep.md) for creating a custom YOLO-format red-ball dataset.
-- [docs/ml_detector_plan.md](docs/ml_detector_plan.md) for the staged ML replacement plan.
-- [docs/ml_onnx_backend.md](docs/ml_onnx_backend.md) for the ONNX detector backend scaffold.
-- [docs/ml_detector_comparison.md](docs/ml_detector_comparison.md) for the HSV vs custom YOLO comparison and final ONNX robot trial.
-- [docs/ml_dataset_plan.md](docs/ml_dataset_plan.md) for the custom red-ball dataset plan.
-- [docs/obstacle_avoidance.md](docs/obstacle_avoidance.md) for the lidar safety layer.
-- [docs/odometry_rviz.md](docs/odometry_rviz.md) for odometry, TF, and RViz visualization.
-- [docs/waypoint_navigation.md](docs/waypoint_navigation.md) for odometry-based waypoint driving.
-- [docs/path_planning.md](docs/path_planning.md) for A* grid planning, live lidar obstacle cells, and planned path following.
-- [docs/nav2_comparison.md](docs/nav2_comparison.md) for the first Nav2 comparison milestone.
-- [docs/navigation_comparison.md](docs/navigation_comparison.md) for custom planner vs Nav2 results.
-- [docs/navigation_final_report.md](docs/navigation_final_report.md) for the final custom-vs-Nav2 navigation summary.
-- [docs/map_localization.md](docs/map_localization.md) for saved-map AMCL localization and `map`-frame Nav2 goals.
-- [docs/nav2_amcl_wall_passing.md](docs/nav2_amcl_wall_passing.md) for the harder map-frame wall-passing experiment.
-- [docs/slam_mapping.md](docs/slam_mapping.md) for SLAM Toolbox mapping, saving/padding a robot-built map, and navigating on it with AMCL.
-- [docs/autonomous_exploration.md](docs/autonomous_exploration.md) for first-pass frontier exploration with SLAM and Nav2.
-- [docs/interview_review.md](docs/interview_review.md) for startup-interview-style review questions.
-
-## Core Robotics Ideas
-
-- Perception turns pixels into a target estimate.
-- Control turns the target estimate into velocity commands.
-- Standalone webcam testing separates perception debugging from robot-control debugging.
-- Detector backend selection keeps the HSV baseline stable while supporting the custom ONNX model.
-- Offline detector evaluation gives HSV and ML backends the same saved-image scoreboard.
-- Dataset audits catch broken labels before training a custom detector.
-- Gazebo provides physics, robot dynamics, sensors, and a repeatable test world.
-- ROS 2 connects independent programs through topics and launch files.
-- The pinhole camera model estimates object distance from apparent size.
-- A neural detector can improve recognition, but it does not remove the need for calibration and geometry.
-- Distance estimates need calibration because detector boxes are image-space measurements, not metric truth.
-- A custom YOLO detector needs examples from the same visual domain where it will run.
-- TF connects robot, sensor, and odometry coordinate frames for visualization and navigation.
-- Waypoint control uses odometry, heading error, and proportional control to drive to a goal.
-- Mission state separates local controller progress from higher-level task health.
-- A progress watchdog can detect when reactive safety is no longer making progress.
-- Simple rerouting can insert temporary detour waypoints before returning to the original goal.
-- A* path planning searches an occupancy grid before motion starts, instead of waiting for the robot to hit a safety condition.
-- Live scan planning projects lidar hits into the odom grid so the planner can use sensed obstacles instead of only hardcoded rectangles.
-- Nav2 comparison shows how a production ROS 2 navigation stack organizes costmaps, planners, controllers, behavior trees, and lifecycle nodes.
-- AMCL connects a saved map to live odometry by estimating the `map -> odom` transform.
-- SLAM Toolbox builds an occupancy map from live lidar scans and robot motion.
-- Frontier exploration turns the live SLAM map into autonomous Nav2 goals at the boundary between known free space and unknown space.
-- RViz path and footprint displays make odometry drift and robot clearance easier to inspect.
-
-## Official References
-
-- Gazebo ROS 2 launch integration: https://gazebosim.org/docs/harmonic/ros2_launch_gazebo/
-- `ros_gz_bridge` topic and YAML configuration: https://docs.ros.org/en/jazzy/p/ros_gz_bridge/
-- Gazebo camera sensor tutorial: https://gazebosim.org/docs/harmonic/sensors/
+- Simulation-only; hardware would require sensor calibration, timing work, and safety checks.
+- The custom planner is educational and not a replacement for Nav2.
+- ONNX detection is slower than HSV on CPU and depends on dataset quality.
+- Distance estimation from image boxes is approximate.
+- Frontier exploration is a first-pass heuristic and does not yet blacklist failed frontiers.
 
 ## License
 
