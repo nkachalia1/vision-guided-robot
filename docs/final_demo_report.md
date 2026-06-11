@@ -68,10 +68,10 @@ ros2 run vision_guided_robot detector_compare \
   --class-names models/ml/red_ball_classes.txt \
   --target-class red_ball \
   --confidence-threshold 0.10 \
-  --image center=/mnt/c/Users/Neel/Pictures/red_center.jpg \
-  --image left=/mnt/c/Users/Neel/Pictures/red_left.jpeg \
-  --image far=/mnt/c/Users/Neel/Pictures/red_far.jpeg \
-  --image negative=/mnt/c/Users/Neel/Pictures/negative.jpg \
+  --image center=/path/to/sample_images/red_center.jpg \
+  --image left=/path/to/sample_images/red_left.jpeg \
+  --image far=/path/to/sample_images/red_far.jpeg \
+  --image negative=/path/to/sample_images/negative.jpg \
   --diameter-m 0.20 \
   --fov-deg 60
 ```

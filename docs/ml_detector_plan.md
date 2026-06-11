@@ -92,7 +92,7 @@ ros2 launch vision_guided_robot sim.launch.py detector_backend:=hsv
 ```bash
 ros2 run vision_guided_robot webcam_detector \
   --backend hsv \
-  --image /mnt/c/Users/Neel/Pictures/red_center.jpg \
+  --image /path/to/sample_images/red_center.jpg \
   --no-display
 ```
 
@@ -114,10 +114,10 @@ Current command:
 ```bash
 ros2 run vision_guided_robot detector_evaluator \
   --backend hsv \
-  --image center=/mnt/c/Users/Neel/Pictures/red_center.jpg \
-  --image left=/mnt/c/Users/Neel/Pictures/red_left.jpeg \
-  --image far=/mnt/c/Users/Neel/Pictures/red_far.jpeg \
-  --image negative=/mnt/c/Users/Neel/Pictures/negative.jpg \
+  --image center=/path/to/sample_images/red_center.jpg \
+  --image left=/path/to/sample_images/red_left.jpeg \
+  --image far=/path/to/sample_images/red_far.jpeg \
+  --image negative=/path/to/sample_images/negative.jpg \
   --diameter-m 0.20 \
   --fov-deg 60 \
   --min-area 50 \
@@ -146,7 +146,7 @@ ros2 run vision_guided_robot detector_evaluator \
   --backend onnx \
   --model-path /path/to/model.onnx \
   --target-class "sports ball" \
-  --image center=/mnt/c/Users/Neel/Pictures/red_center.jpg
+  --image center=/path/to/sample_images/red_center.jpg
 ```
 
 This uses OpenCV DNN and a YOLO-style ONNX output parser. Generic COCO YOLO11n was rejected, then a custom `red_ball` YOLO11n model was trained and exported to ONNX.

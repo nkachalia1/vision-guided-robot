@@ -76,13 +76,13 @@ The next retries reached the second-wall area but oscillated left/right and then
 ```bash
 cd ~/vision_guided_robot_ws
 
-cp "/mnt/c/Users/Neel/Documents/New project/src/vision_guided_robot/config/nav2_map_wall_pass_params.yaml" \
+cp "/path/to/source_mirror/src/vision_guided_robot/config/nav2_map_wall_pass_params.yaml" \
   src/vision_guided_robot/config/
 
-cp "/mnt/c/Users/Neel/Documents/New project/src/vision_guided_robot/launch/demo_nav2_amcl_wall_pass.launch.py" \
+cp "/path/to/source_mirror/src/vision_guided_robot/launch/demo_nav2_amcl_wall_pass.launch.py" \
   src/vision_guided_robot/launch/
 
-cp -r "/mnt/c/Users/Neel/Documents/New project/docs/." docs/
+cp -r "/path/to/source_mirror/docs/." docs/
 ```
 
 Build:

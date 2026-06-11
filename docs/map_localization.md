@@ -23,24 +23,24 @@ The first map is intentionally small. It contains the same two wall obstacles us
 ```bash
 cd ~/vision_guided_robot_ws
 
-cp "/mnt/c/Users/Neel/Documents/New project/src/vision_guided_robot/setup.py" \
+cp "/path/to/source_mirror/src/vision_guided_robot/setup.py" \
   src/vision_guided_robot/
 
-cp "/mnt/c/Users/Neel/Documents/New project/src/vision_guided_robot/launch/demo_nav2_amcl.launch.py" \
+cp "/path/to/source_mirror/src/vision_guided_robot/launch/demo_nav2_amcl.launch.py" \
   src/vision_guided_robot/launch/
 
-cp "/mnt/c/Users/Neel/Documents/New project/src/vision_guided_robot/config/nav2_map_params.yaml" \
+cp "/path/to/source_mirror/src/vision_guided_robot/config/nav2_map_params.yaml" \
   src/vision_guided_robot/config/
 
 mkdir -p src/vision_guided_robot/maps
-cp -r "/mnt/c/Users/Neel/Documents/New project/src/vision_guided_robot/maps/." \
+cp -r "/path/to/source_mirror/src/vision_guided_robot/maps/." \
   src/vision_guided_robot/maps/
 
-cp "/mnt/c/Users/Neel/Documents/New project/src/vision_guided_robot/rviz/nav2_map.rviz" \
+cp "/path/to/source_mirror/src/vision_guided_robot/rviz/nav2_map.rviz" \
   src/vision_guided_robot/rviz/
 
-cp "/mnt/c/Users/Neel/Documents/New project/tools/analyze_bag.py" tools/
-cp -r "/mnt/c/Users/Neel/Documents/New project/docs/." docs/
+cp "/path/to/source_mirror/tools/analyze_bag.py" tools/
+cp -r "/path/to/source_mirror/docs/." docs/
 ```
 
 Build:

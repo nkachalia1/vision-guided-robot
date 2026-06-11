@@ -17,23 +17,23 @@ Both stacks use the same robot, `/scan`, `/odom`, `/tf`, and Gazebo obstacle geo
 ```bash
 cd ~/vision_guided_robot_ws
 
-cp "/mnt/c/Users/Neel/Documents/New project/src/vision_guided_robot/launch/sim.launch.py" \
+cp "/path/to/source_mirror/src/vision_guided_robot/launch/sim.launch.py" \
   src/vision_guided_robot/launch/
 
-cp "/mnt/c/Users/Neel/Documents/New project/src/vision_guided_robot/launch/demo_live_planned.launch.py" \
+cp "/path/to/source_mirror/src/vision_guided_robot/launch/demo_live_planned.launch.py" \
   src/vision_guided_robot/launch/
 
-cp "/mnt/c/Users/Neel/Documents/New project/src/vision_guided_robot/launch/demo_nav2.launch.py" \
+cp "/path/to/source_mirror/src/vision_guided_robot/launch/demo_nav2.launch.py" \
   src/vision_guided_robot/launch/
 
-cp "/mnt/c/Users/Neel/Documents/New project/src/vision_guided_robot/launch/demo_two_obstacle_planned.launch.py" \
+cp "/path/to/source_mirror/src/vision_guided_robot/launch/demo_two_obstacle_planned.launch.py" \
   src/vision_guided_robot/launch/
 
-cp "/mnt/c/Users/Neel/Documents/New project/src/vision_guided_robot/launch/demo_two_obstacle_nav2.launch.py" \
+cp "/path/to/source_mirror/src/vision_guided_robot/launch/demo_two_obstacle_nav2.launch.py" \
   src/vision_guided_robot/launch/
 
-cp "/mnt/c/Users/Neel/Documents/New project/tools/analyze_bag.py" tools/
-cp -r "/mnt/c/Users/Neel/Documents/New project/docs/." docs/
+cp "/path/to/source_mirror/tools/analyze_bag.py" tools/
+cp -r "/path/to/source_mirror/docs/." docs/
 ```
 
 Build:

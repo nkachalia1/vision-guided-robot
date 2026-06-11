@@ -60,19 +60,19 @@ sudo apt install ros-humble-navigation2 ros-humble-nav2-bringup
 ```bash
 cd ~/vision_guided_robot_ws
 
-cp "/mnt/c/Users/Neel/Documents/New project/src/vision_guided_robot/launch/sim.launch.py" \
+cp "/path/to/source_mirror/src/vision_guided_robot/launch/sim.launch.py" \
   src/vision_guided_robot/launch/
 
-cp "/mnt/c/Users/Neel/Documents/New project/src/vision_guided_robot/launch/demo_nav2.launch.py" \
+cp "/path/to/source_mirror/src/vision_guided_robot/launch/demo_nav2.launch.py" \
   src/vision_guided_robot/launch/
 
-cp "/mnt/c/Users/Neel/Documents/New project/src/vision_guided_robot/config/nav2_params.yaml" \
+cp "/path/to/source_mirror/src/vision_guided_robot/config/nav2_params.yaml" \
   src/vision_guided_robot/config/
 
-cp "/mnt/c/Users/Neel/Documents/New project/src/vision_guided_robot/package.xml" \
+cp "/path/to/source_mirror/src/vision_guided_robot/package.xml" \
   src/vision_guided_robot/
 
-cp -r "/mnt/c/Users/Neel/Documents/New project/docs/." docs/
+cp -r "/path/to/source_mirror/docs/." docs/
 ```
 
 Build:

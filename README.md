@@ -154,3 +154,7 @@ Start here:
 - Gazebo ROS 2 launch integration: https://gazebosim.org/docs/harmonic/ros2_launch_gazebo/
 - `ros_gz_bridge` topic and YAML configuration: https://docs.ros.org/en/jazzy/p/ros_gz_bridge/
 - Gazebo camera sensor tutorial: https://gazebosim.org/docs/harmonic/sensors/
+
+## License
+
+This project is released under the MIT License. See [LICENSE](LICENSE).

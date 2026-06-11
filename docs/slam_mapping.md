@@ -51,19 +51,19 @@ sudo apt install ros-humble-slam-toolbox
 ```bash
 cd ~/vision_guided_robot_ws
 
-cp "/mnt/c/Users/Neel/Documents/New project/src/vision_guided_robot/launch/demo_slam.launch.py" \
+cp "/path/to/source_mirror/src/vision_guided_robot/launch/demo_slam.launch.py" \
   src/vision_guided_robot/launch/
 
-cp "/mnt/c/Users/Neel/Documents/New project/src/vision_guided_robot/config/slam_toolbox.yaml" \
+cp "/path/to/source_mirror/src/vision_guided_robot/config/slam_toolbox.yaml" \
   src/vision_guided_robot/config/
 
-cp "/mnt/c/Users/Neel/Documents/New project/src/vision_guided_robot/config/nav2_slam_params.yaml" \
+cp "/path/to/source_mirror/src/vision_guided_robot/config/nav2_slam_params.yaml" \
   src/vision_guided_robot/config/
 
-cp "/mnt/c/Users/Neel/Documents/New project/src/vision_guided_robot/package.xml" \
+cp "/path/to/source_mirror/src/vision_guided_robot/package.xml" \
   src/vision_guided_robot/
 
-cp -r "/mnt/c/Users/Neel/Documents/New project/docs/." docs/
+cp -r "/path/to/source_mirror/docs/." docs/
 
 source /opt/ros/humble/setup.bash
 colcon build --symlink-install
@@ -250,7 +250,7 @@ If Nav2 warns that the robot is out of map bounds, pad the saved map first:
 ```bash
 cd ~/vision_guided_robot_ws
 
-cp "/mnt/c/Users/Neel/Documents/New project/tools/pad_map.py" tools/
+cp "/path/to/source_mirror/tools/pad_map.py" tools/
 
 python3 tools/pad_map.py \
   maps/slam/slam_two_wall_map.yaml \
@@ -397,10 +397,10 @@ cp maps/slam/slam_two_wall_map_padded.pgm \
 Copy the launch shortcut from the Windows source mirror:
 
 ```bash
-cp "/mnt/c/Users/Neel/Documents/New project/src/vision_guided_robot/launch/demo_nav2_slam_map.launch.py" \
+cp "/path/to/source_mirror/src/vision_guided_robot/launch/demo_nav2_slam_map.launch.py" \
   src/vision_guided_robot/launch/
 
-cp -r "/mnt/c/Users/Neel/Documents/New project/docs/." docs/
+cp -r "/path/to/source_mirror/docs/." docs/
 ```
 
 Build:

@@ -26,10 +26,10 @@ source install/setup.bash
 
 ros2 run vision_guided_robot dataset_prep \
   --dataset-root datasets/red_ball_yolo \
-  --positive train=/mnt/c/Users/Neel/Pictures/red_center.jpg \
-  --positive train=/mnt/c/Users/Neel/Pictures/red_left.jpeg \
-  --positive val=/mnt/c/Users/Neel/Pictures/red_far.jpeg \
-  --negative val=/mnt/c/Users/Neel/Pictures/negative.jpg \
+  --positive train=/path/to/sample_images/red_center.jpg \
+  --positive train=/path/to/sample_images/red_left.jpeg \
+  --positive val=/path/to/sample_images/red_far.jpeg \
+  --negative val=/path/to/sample_images/negative.jpg \
   --min-area 50 \
   --min-circularity 0.30
 ```
@@ -47,10 +47,10 @@ val    negative  negative      n/a         negative.jpg
 
 ## Inspect The Previews
 
-Open this folder from Windows:
+Open the generated previews folder from your file explorer. From WSL, this command opens the right location on Windows:
 
-```text
-\\wsl.localhost\Ubuntu\home\nkachalia1\vision_guided_robot_ws\datasets\red_ball_yolo\previews
+```bash
+explorer.exe "$(wslpath -w ~/vision_guided_robot_ws/datasets/red_ball_yolo/previews)"
 ```
 
 The previews are not training data. They are visual checks so you can confirm whether the HSV pseudo-label is reasonable.
@@ -104,8 +104,8 @@ Use `val=` for validation images:
 For larger collection, make folders in Windows:
 
 ```text
-C:\Users\Neel\Pictures\red_ball_dataset\positive
-C:\Users\Neel\Pictures\red_ball_dataset\negative
+C:\path\to\red_ball_dataset\positive
+C:\path\to\red_ball_dataset\negative
 ```
 
 Put red-target images in `positive` and no-target or wrong-object images in `negative`.
@@ -115,8 +115,8 @@ Then import the folders:
 ```bash
 ros2 run vision_guided_robot dataset_prep \
   --dataset-root datasets/red_ball_yolo \
-  --positive-dir /mnt/c/Users/Neel/Pictures/red_ball_dataset/positive \
-  --negative-dir /mnt/c/Users/Neel/Pictures/red_ball_dataset/negative \
+  --positive-dir /path/to/red_ball_dataset/positive \
+  --negative-dir /path/to/red_ball_dataset/negative \
   --val-ratio 0.20 \
   --min-area 50 \
   --min-circularity 0.30
@@ -129,8 +129,8 @@ After you have manually fixed labels, append new images without touching existin
 ```bash
 ros2 run vision_guided_robot dataset_prep \
   --dataset-root datasets/red_ball_yolo \
-  --positive-dir /mnt/c/Users/Neel/Pictures/red_ball_dataset/positive \
-  --negative-dir /mnt/c/Users/Neel/Pictures/red_ball_dataset/negative \
+  --positive-dir /path/to/red_ball_dataset/positive \
+  --negative-dir /path/to/red_ball_dataset/negative \
   --val-ratio 0.20 \
   --min-area 50 \
   --min-circularity 0.30 \
@@ -144,8 +144,8 @@ You can also use glob patterns:
 ```bash
 ros2 run vision_guided_robot dataset_prep \
   --dataset-root datasets/red_ball_yolo \
-  --positive-glob "/mnt/c/Users/Neel/Pictures/red_ball_dataset/positive/*.jpg" \
-  --negative-glob "/mnt/c/Users/Neel/Pictures/red_ball_dataset/negative/*.jpg"
+  --positive-glob "/path/to/red_ball_dataset/positive/*.jpg" \
+  --negative-glob "/path/to/red_ball_dataset/negative/*.jpg"
 ```
 
 Use unique filenames when adding batches. If you intentionally want to replace existing copied images and regenerate their labels, add:

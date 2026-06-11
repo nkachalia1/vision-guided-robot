@@ -14,24 +14,24 @@ blocked goal:  x=1.2, y=0.4
 ```bash
 cd ~/vision_guided_robot_ws
 
-cp "/mnt/c/Users/Neel/Documents/New project/src/vision_guided_robot/launch/demo_forced_recovery_planned.launch.py" \
+cp "/path/to/source_mirror/src/vision_guided_robot/launch/demo_forced_recovery_planned.launch.py" \
   src/vision_guided_robot/launch/
 
-cp "/mnt/c/Users/Neel/Documents/New project/src/vision_guided_robot/launch/demo_forced_recovery_nav2.launch.py" \
+cp "/path/to/source_mirror/src/vision_guided_robot/launch/demo_forced_recovery_nav2.launch.py" \
   src/vision_guided_robot/launch/
 
-cp "/mnt/c/Users/Neel/Documents/New project/src/vision_guided_robot/launch/demo_nav2.launch.py" \
+cp "/path/to/source_mirror/src/vision_guided_robot/launch/demo_nav2.launch.py" \
   src/vision_guided_robot/launch/
 
-cp "/mnt/c/Users/Neel/Documents/New project/src/vision_guided_robot/config/nav2_recovery_stress_params.yaml" \
+cp "/path/to/source_mirror/src/vision_guided_robot/config/nav2_recovery_stress_params.yaml" \
   src/vision_guided_robot/config/
 
 mkdir -p src/vision_guided_robot/models/recovery_blocker
-cp -r "/mnt/c/Users/Neel/Documents/New project/src/vision_guided_robot/models/recovery_blocker/." \
+cp -r "/path/to/source_mirror/src/vision_guided_robot/models/recovery_blocker/." \
   src/vision_guided_robot/models/recovery_blocker/
 
-cp "/mnt/c/Users/Neel/Documents/New project/tools/analyze_bag.py" tools/
-cp -r "/mnt/c/Users/Neel/Documents/New project/docs/." docs/
+cp "/path/to/source_mirror/tools/analyze_bag.py" tools/
+cp -r "/path/to/source_mirror/docs/." docs/
 ```
 
 Build:
