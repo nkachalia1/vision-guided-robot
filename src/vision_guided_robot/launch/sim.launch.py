@@ -29,6 +29,9 @@ def generate_launch_description():
         [package_share, "models", LaunchConfiguration("target_model"), "model.sdf"]
     )
     occluder_sdf = PathJoinSubstitution([package_share, "models", "occluder_wall", "model.sdf"])
+    second_occluder_sdf = PathJoinSubstitution(
+        [package_share, "models", "occluder_wall_blue", "model.sdf"]
+    )
 
     gz_sim_launch = PythonLaunchDescriptionSource(
         [get_package_share_directory("ros_gz_sim"), "/launch/gz_sim.launch.py"]
@@ -454,7 +457,7 @@ def generate_launch_description():
                             "-file",
                             occluder_sdf,
                             "-name",
-                            "occluder_wall",
+                            "primary_occluder_wall",
                             "-x",
                             LaunchConfiguration("occluder_x"),
                             "-y",
@@ -477,9 +480,9 @@ def generate_launch_description():
                             "-world",
                             "red_ball_world",
                             "-file",
-                            occluder_sdf,
+                            second_occluder_sdf,
                             "-name",
-                            "occluder_wall_2",
+                            "secondary_occluder_wall",
                             "-x",
                             LaunchConfiguration("second_occluder_x"),
                             "-y",

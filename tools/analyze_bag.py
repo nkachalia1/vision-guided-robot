@@ -24,6 +24,8 @@ PLANNED_PATH_TOPIC = "/planned_path"
 NAV2_PLAN_TOPIC = "/plan"
 EXPLORER_STATE_TOPIC = "/explorer/state"
 EXPLORER_GOAL_TOPIC = "/explorer/goal"
+TARGET_SEARCH_STATE_TOPIC = "/target_search/state"
+TARGET_SEARCH_GOAL_TOPIC = "/target_search/goal"
 NAV2_STATUS_TOPICS = {
     "/navigate_to_pose/_action/status",
     "/navigate_through_poses/_action/status",
@@ -76,6 +78,7 @@ def main() -> None:
     mission_state_samples: list[tuple[int, str]] = []
     planner_state_samples: list[tuple[int, str]] = []
     explorer_state_samples: list[tuple[int, str]] = []
+    target_search_state_samples: list[tuple[int, str]] = []
     planned_path_samples: list[tuple[int, int]] = []
     nav2_plan_samples: list[tuple[int, int]] = []
     nav2_status_samples: list[tuple[int, str]] = []
@@ -83,6 +86,7 @@ def main() -> None:
     odom_samples: list[tuple[int, float, float]] = []
     goal_samples: list[tuple[int, float, float]] = []
     explorer_goal_samples: list[tuple[int, float, float]] = []
+    target_search_goal_samples: list[tuple[int, float, float]] = []
     amcl_pose_samples: list[tuple[int, float, float]] = []
     map_samples: list[tuple[int, int, int, float]] = []
     tf_samples_by_pair: dict[tuple[str, str], list[tuple[int, float, float, float]]] = defaultdict(list)
@@ -142,6 +146,10 @@ def main() -> None:
             msg = deserialize_message(data, state_type)
             explorer_state_samples.append((timestamp, msg.data))
 
+        elif topic_name == TARGET_SEARCH_STATE_TOPIC:
+            msg = deserialize_message(data, state_type)
+            target_search_state_samples.append((timestamp, msg.data))
+
         elif topic_name == PLANNED_PATH_TOPIC:
             msg = deserialize_message(data, path_type)
             planned_path_samples.append((timestamp, len(msg.poses)))
@@ -161,6 +169,12 @@ def main() -> None:
         elif topic_name == EXPLORER_GOAL_TOPIC:
             msg = deserialize_message(data, goal_type)
             explorer_goal_samples.append(
+                (timestamp, msg.pose.position.x, msg.pose.position.y)
+            )
+
+        elif topic_name == TARGET_SEARCH_GOAL_TOPIC:
+            msg = deserialize_message(data, goal_type)
+            target_search_goal_samples.append(
                 (timestamp, msg.pose.position.x, msg.pose.position.y)
             )
 
@@ -233,6 +247,11 @@ def main() -> None:
     planner_state_durations_s = estimate_state_durations_s(planner_state_samples, bag_end_t)
     explorer_state_counts = count_states(explorer_state_samples)
     explorer_state_durations_s = estimate_state_durations_s(explorer_state_samples, bag_end_t)
+    target_search_state_counts = count_states(target_search_state_samples)
+    target_search_state_durations_s = estimate_state_durations_s(
+        target_search_state_samples,
+        bag_end_t,
+    )
     nav2_status_counts = count_states(nav2_status_samples)
     nav2_status_durations_s = estimate_state_durations_s(nav2_status_samples, bag_end_t)
     waypoint_success = bool(waypoint_state_samples and waypoint_state_samples[-1][1] == "DONE")
@@ -249,6 +268,9 @@ def main() -> None:
     nav2_success = any(status == "SUCCEEDED" for _, status in nav2_status_samples)
     explorer_success = any(
         state in {"GOAL_SUCCEEDED", "DONE"} for _, state in explorer_state_samples
+    )
+    target_search_success = any(
+        state == "TARGET_REACHED" for _, state in target_search_state_samples
     )
     map_base_samples = estimate_map_base_samples(tf_samples_by_pair)
     nav2_goal_pose_source = "map_tf" if map_base_samples else "odom"
@@ -279,6 +301,7 @@ def main() -> None:
     print(f"mission_state_samples: {len(mission_state_samples)}")
     print(f"planner_state_samples: {len(planner_state_samples)}")
     print(f"explorer_state_samples: {len(explorer_state_samples)}")
+    print(f"target_search_state_samples: {len(target_search_state_samples)}")
     print(f"planned_path_samples: {len(planned_path_samples)}")
     print_path_summary("planned_path", planned_path_samples)
     print(f"nav2_plan_samples: {len(nav2_plan_samples)}")
@@ -287,6 +310,7 @@ def main() -> None:
     print(f"odom_samples: {len(odom_samples)}")
     print(f"goal_samples: {len(goal_samples)}")
     print(f"explorer_goal_samples: {len(explorer_goal_samples)}")
+    print(f"target_search_goal_samples: {len(target_search_goal_samples)}")
     print(f"amcl_pose_samples: {len(amcl_pose_samples)}")
     print_map_summary(map_samples)
     if not target_samples:
@@ -298,6 +322,7 @@ def main() -> None:
         print_odom_summary(odom_samples)
         print_goal_summary(goal_samples)
         print_xy_summary("explorer_goal", explorer_goal_samples)
+        print_xy_summary("target_search_goal", target_search_goal_samples)
         print_amcl_summary(amcl_pose_samples)
         print_map_base_summary(map_base_samples)
         print(f"max_linear_mps: {max_linear:.3f}")
@@ -312,6 +337,11 @@ def main() -> None:
         print_state_summary("mission", mission_state_counts, mission_state_durations_s)
         print_state_summary("planner", planner_state_counts, planner_state_durations_s)
         print_state_summary("explorer", explorer_state_counts, explorer_state_durations_s)
+        print_state_summary(
+            "target_search",
+            target_search_state_counts,
+            target_search_state_durations_s,
+        )
         print_state_summary("nav2_action", nav2_status_counts, nav2_status_durations_s)
         print_action_status_topic_summary(action_status_samples_by_topic, bag_end_t)
         print(f"custom_recovery_detected: {custom_recovery_detected}")
@@ -328,9 +358,10 @@ def main() -> None:
         print(f"planner_success: {planner_success}")
         print(f"nav2_success: {nav2_success or nav2_odom_success}")
         print(f"explorer_success: {explorer_success}")
+        print(f"target_search_success: {target_search_success}")
         print(
             "success: "
-            f"{waypoint_success or mission_success or nav2_success or nav2_odom_success or explorer_success}"
+            f"{waypoint_success or mission_success or nav2_success or nav2_odom_success or explorer_success or target_search_success}"
         )
         return
 
@@ -354,6 +385,7 @@ def main() -> None:
     print_odom_summary(odom_samples)
     print_goal_summary(goal_samples)
     print_xy_summary("explorer_goal", explorer_goal_samples)
+    print_xy_summary("target_search_goal", target_search_goal_samples)
     print_amcl_summary(amcl_pose_samples)
     print_map_base_summary(map_base_samples)
     print(f"max_linear_mps: {max_linear:.3f}")
@@ -370,6 +402,11 @@ def main() -> None:
     print_state_summary("mission", mission_state_counts, mission_state_durations_s)
     print_state_summary("planner", planner_state_counts, planner_state_durations_s)
     print_state_summary("explorer", explorer_state_counts, explorer_state_durations_s)
+    print_state_summary(
+        "target_search",
+        target_search_state_counts,
+        target_search_state_durations_s,
+    )
     print_state_summary("nav2_action", nav2_status_counts, nav2_status_durations_s)
     print_action_status_topic_summary(action_status_samples_by_topic, bag_end_t)
     print(f"custom_recovery_detected: {custom_recovery_detected}")
@@ -386,9 +423,10 @@ def main() -> None:
     print(f"planner_success: {planner_success}")
     print(f"nav2_success: {nav2_success or nav2_odom_success}")
     print(f"explorer_success: {explorer_success}")
+    print(f"target_search_success: {target_search_success}")
     print(
         "success: "
-        f"{success or waypoint_success or mission_success or nav2_success or nav2_odom_success or explorer_success}"
+        f"{success or waypoint_success or mission_success or nav2_success or nav2_odom_success or explorer_success or target_search_success}"
     )
 
 

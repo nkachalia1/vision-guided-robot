@@ -1,22 +1,22 @@
 # Demo Media
 
-Put the final GitHub demo clip here.
+Curated media files for the GitHub README.
 
-Recommended file:
+Current README demo:
 
 ```text
-media/frontier_exploration.gif
+media/two_wall_search_demo.gif
 ```
 
-Recommended content:
+Demo content:
 
-- Gazebo robot moving
-- RViz map growing
-- frontier goal markers or `/explorer/state`
-- a visible `GOAL_SUCCEEDED` transition
+- Gazebo robot, red ball, and two wall obstacles
+- `/ball/annotated_image` perception view
+- `/target_search/state` mission transitions
+- Corridor search behavior before target approach
 
-After adding the GIF, place this in the README under `## Demo Preview`:
+README embed:
 
 ```markdown
-![Autonomous frontier exploration demo](media/frontier_exploration.gif)
+![Two-wall target search demo](media/two_wall_search_demo.gif)
 ```

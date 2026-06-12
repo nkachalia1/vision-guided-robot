@@ -11,6 +11,7 @@ from rclpy.action import ActionClient
 from rclpy.duration import Duration
 from rclpy.node import Node
 from rclpy.time import Time
+from std_msgs.msg import Bool
 from std_msgs.msg import String
 import tf2_ros
 from visualization_msgs.msg import Marker, MarkerArray
@@ -31,6 +32,7 @@ class FrontierExplorerNode(Node):
         self.declare_parameter("state_topic", "/explorer/state")
         self.declare_parameter("goal_topic", "/explorer/goal")
         self.declare_parameter("marker_topic", "/explorer/frontiers")
+        self.declare_parameter("pause_topic", "/explorer/pause")
         self.declare_parameter("map_frame", "map")
         self.declare_parameter("robot_base_frame", "base_link")
         self.declare_parameter("nav2_action_name", "/navigate_to_pose")
@@ -50,6 +52,8 @@ class FrontierExplorerNode(Node):
 
         self.latest_map: OccupancyGrid | None = None
         self.active_goal = False
+        self.goal_handle = None
+        self.paused = False
         self.sent_goals = 0
         self.last_goal_finished_time_s: float | None = None
         self.last_state = ""
@@ -75,6 +79,12 @@ class FrontierExplorerNode(Node):
             self.on_map,
             10,
         )
+        self.pause_sub = self.create_subscription(
+            Bool,
+            self.get_parameter("pause_topic").value,
+            self.on_pause,
+            10,
+        )
 
         period_s = max(0.2, float(self.get_parameter("timer_period_s").value))
         self.timer = self.create_timer(period_s, self.on_timer)
@@ -85,7 +95,20 @@ class FrontierExplorerNode(Node):
     def on_map(self, msg: OccupancyGrid) -> None:
         self.latest_map = msg
 
+    def on_pause(self, msg: Bool) -> None:
+        was_paused = self.paused
+        self.paused = bool(msg.data)
+        if self.paused and self.active_goal and self.goal_handle is not None:
+            self.goal_handle.cancel_goal_async()
+        if self.paused != was_paused:
+            state = "PAUSED" if self.paused else "RESUMED"
+            self.get_logger().info(f"Explorer {state.lower()}")
+
     def on_timer(self) -> None:
+        if self.paused:
+            self._publish_state("PAUSED")
+            return
+
         if self.latest_map is None:
             self._publish_state("WAITING_FOR_MAP")
             return
@@ -158,11 +181,13 @@ class FrontierExplorerNode(Node):
         goal_handle = future.result()
         if not goal_handle.accepted:
             self.active_goal = False
+            self.goal_handle = None
             self.last_goal_finished_time_s = self._now_s()
             self._publish_state("GOAL_REJECTED")
             self.get_logger().warning("Frontier goal was rejected")
             return
 
+        self.goal_handle = goal_handle
         self._publish_state("NAVIGATING")
         result_future = goal_handle.get_result_async()
         result_future.add_done_callback(self._on_goal_result)
@@ -170,7 +195,12 @@ class FrontierExplorerNode(Node):
     def _on_goal_result(self, future) -> None:
         result = future.result()
         self.active_goal = False
+        self.goal_handle = None
         self.last_goal_finished_time_s = self._now_s()
+
+        if self.paused:
+            self._publish_state("PAUSED")
+            return
 
         if result.status == GoalStatus.STATUS_SUCCEEDED:
             self._publish_state("GOAL_SUCCEEDED")

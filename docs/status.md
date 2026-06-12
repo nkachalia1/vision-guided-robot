@@ -20,6 +20,8 @@ The final portfolio wrap-up is now in progress. The SLAM-generated map has been 
 
 Autonomous exploration is now validated. The `frontier_explorer` node reads the live SLAM `/map`, detects frontier clusters between known free cells and unknown cells, scores candidate goals, and sends one frontier goal at a time to Nav2. `bags/final_frontier_exploration` recorded 3 explorer goals, 2 `GOAL_SUCCEEDED` transitions, 251 map samples, a final map size of `269x242 @ 0.050 m/px`, and `explorer_success: True`.
 
+The active next milestone is search-and-approach behind obstacles. `demo_search_ball_two_walls.launch.py` spawns two walls and a red ball behind them, starts SLAM, Nav2, camera perception, and `target_search_mission`. The mission scans from the current pose, drives to configured search poses when the ball is not visible, scans again, and switches to a Nav2 target-approach goal when `/ball/relative_position` appears.
+
 Recorded and analyzed validation bags:
 
 1. `bags/final_vision_approach`
@@ -98,6 +100,7 @@ The project is a ROS 2 + Gazebo simulation for a differential-drive robot with:
 - saved SLAM-generated map artifact: `maps/slam/slam_two_wall_map.yaml` and `maps/slam/slam_two_wall_map.pgm`
 - launch shortcut for robot-built-map navigation: `demo_nav2_slam_map.launch.py`
 - validated frontier exploration for autonomous SLAM mapping: `frontier_explorer` and `demo_slam_explore.launch.py`
+- active search-and-approach behavior for a ball hidden behind two walls: `target_search_mission` scans, relocates, scans again, and then approaches the detected target
 - portfolio summary: `docs/project_portfolio.md`
 
 The main command path is:
@@ -162,6 +165,7 @@ The controller can be either:
 | AMCL on SLAM-generated map | Validated | `bags/final_slam_map_amcl_fast_run2`: `map_size: 148x153 @ 0.050 m/px`, `amcl_pose_samples: 20`, `nav2_plan_samples: 29`, `odom_displacement_m: 0.953`, `max_linear_mps: 0.818`, `final_map_base_xy_m: (0.992, -0.489)`, `nav2_goal_error_m: 0.236`, `success: True`. |
 | Robot-built-map launch shortcut | Added | `demo_nav2_slam_map.launch.py` wraps the validated AMCL launch with `slam_two_wall_map_padded.yaml` and `nav2_map_wall_pass_params.yaml` defaults. Copy the generated map pair into `src/vision_guided_robot/maps/` before building. |
 | Autonomous frontier exploration | Validated | `bags/final_frontier_exploration`: `explorer_goal_samples: 3`, `GOAL_SUCCEEDED: 2`, `map_samples: 251`, `map_size: 269x242 @ 0.050 m/px`, `max_linear_mps: 1.500`, `max_angular_radps: 2.800`, `explorer_success: True`, `success: True`. |
+| Two-wall search and approach | Implemented, not yet validated | `target_search_mission` scans in place, moves through search poses if no target is visible, then sends a Nav2 approach goal near the target. Validate with `bags/final_search_ball_two_walls`. |
 | Portfolio wrap-up | Done | `docs/project_portfolio.md` summarizes the final architecture, demo commands, validation evidence, engineering choices, limitations, and next extensions. |
 
 ## Tuned Defaults

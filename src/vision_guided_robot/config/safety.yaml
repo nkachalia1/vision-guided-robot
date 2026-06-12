@@ -7,11 +7,11 @@ safety_filter:
     state_topic: "/safety/state"
     control_rate_hz: 30.0
 
-    obstacle_stop_distance_m: 0.35
-    obstacle_slow_distance_m: 0.90
-    front_sector_angle_rad: 0.45
+    obstacle_stop_distance_m: 0.28
+    obstacle_slow_distance_m: 0.60
+    front_sector_angle_rad: 0.38
     scan_timeout_s: 0.6
-    avoid_turn_speed_radps: 0.55
-    avoid_forward_speed_mps: 0.50
-    avoid_hold_time_s: 1.2
+    avoid_turn_speed_radps: 1.40
+    avoid_forward_speed_mps: 0.80
+    avoid_hold_time_s: 0.7
     avoid_forward_sector_angle_rad: 0.22

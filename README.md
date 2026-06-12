@@ -6,21 +6,12 @@ This project was built as a learning-first robotics portfolio: every major capab
 
 ## Demo Preview
 
-Recommended GitHub demo clip:
+![Two-wall target search demo](media/two_wall_search_demo.gif)
 
-```text
-Gazebo + RViz showing SLAM map growth, frontier goals, and the robot navigating autonomously.
-```
-
-Add the final GIF/video under `media/` using [docs/github_showcase.md](docs/github_showcase.md). Until then, the fastest way to try the current headline demo is:
+Two-wall search-and-approach demo: the robot scans for the ball, moves toward the corridor, scans again, then continues the mission behavior once the target is visible.
 
 ```bash
-ros2 launch vision_guided_robot demo_slam_explore.launch.py \
-  rviz:=true \
-  max_goals:=6 \
-  goal_cooldown_s:=0.2 \
-  max_goal_distance_m:=4.5 \
-  distance_weight:=0.5
+ros2 launch vision_guided_robot demo_search_ball_two_walls.launch.py rviz:=true
 ```
 
 ## What It Demonstrates
@@ -35,6 +26,7 @@ ros2 launch vision_guided_robot demo_slam_explore.launch.py \
 - AMCL localization on a saved map
 - SLAM Toolbox mapping from live `/scan`
 - Autonomous frontier exploration using the live SLAM map
+- Search-and-approach behavior: explore behind walls until the camera finds the ball, then travel to it
 - Repeatable validation with rosbag analysis
 
 ## Quick Results
@@ -67,6 +59,7 @@ flowchart TB
     SLAM["SLAM Toolbox<br/>/map and map -> odom"]
     Nav2["Nav2<br/>planner, controller, BT, behaviors"]
     Explorer["frontier_explorer"]
+    TargetSearch["target_search_mission<br/>scan, relocate, approach"]
     Cmd["/cmd_vel"]
 
     Gazebo --> Bridge
@@ -81,7 +74,10 @@ flowchart TB
     Odom --> SLAM
     SLAM --> Nav2
     SLAM --> Explorer
+    SLAM --> TargetSearch
     Explorer --> Nav2
+    Perception --> TargetSearch
+    TargetSearch --> Nav2
     VisualServo --> Cmd
     CustomNav --> Cmd
     Nav2 --> Cmd
@@ -104,6 +100,12 @@ Headline autonomous exploration demo:
 
 ```bash
 ros2 launch vision_guided_robot demo_slam_explore.launch.py rviz:=true max_goals:=6
+```
+
+Two-wall search-and-approach demo:
+
+```bash
+ros2 launch vision_guided_robot demo_search_ball_two_walls.launch.py rviz:=true
 ```
 
 Object approach demo:
@@ -132,6 +134,7 @@ Start here if you are reviewing the project:
 - [docs/github_showcase.md](docs/github_showcase.md): how to record and publish a GitHub demo clip
 - [docs/status.md](docs/status.md): completed milestones and validation bags
 - [docs/autonomous_exploration.md](docs/autonomous_exploration.md): frontier exploration implementation and validation
+- [docs/search_and_approach.md](docs/search_and_approach.md): two-wall ball search and target-approach demo
 - [docs/slam_mapping.md](docs/slam_mapping.md): SLAM Toolbox mapping and robot-built-map navigation
 - [docs/navigation_final_report.md](docs/navigation_final_report.md): custom navigation vs Nav2 comparison
 - [docs/ml_detector_comparison.md](docs/ml_detector_comparison.md): HSV vs ONNX detector comparison
@@ -150,6 +153,7 @@ src/vision_guided_robot/vision_guided_robot/
   grid_planner_node.py          # educational A* planner wrapper
   waypoint_driver_node.py       # waypoint/path follower and recovery
   frontier_explorer_node.py     # autonomous exploration goal generator
+  target_search_mission_node.py # scan, relocate, and approach hidden target
 
 src/vision_guided_robot/launch/
   demo_hsv.launch.py
@@ -157,6 +161,7 @@ src/vision_guided_robot/launch/
   demo_live_planned.launch.py
   demo_nav2_slam_map.launch.py
   demo_slam_explore.launch.py
+  demo_search_ball_two_walls.launch.py
 ```
 
 ## Validation Workflow
