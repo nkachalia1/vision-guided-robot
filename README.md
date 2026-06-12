@@ -14,6 +14,26 @@ Two-wall search-and-approach demo: the robot scans for the ball, moves toward th
 ros2 launch vision_guided_robot demo_search_ball_two_walls.launch.py rviz:=true
 ```
 
+## Try It In A Browser
+
+If you have Docker Desktop, you can run the demo inside a browser-hosted Linux desktop:
+
+```bash
+git clone https://github.com/nkachalia1/vision-guided-robot.git
+cd vision-guided-robot
+docker compose up --build
+```
+
+Then open:
+
+```text
+http://localhost:6080/vnc.html?autoconnect=true&resize=scale
+```
+
+The container starts an XFCE desktop, launches the two-wall Gazebo demo, and opens the annotated camera view. The first build can take several minutes because it installs ROS 2, Gazebo, Nav2, SLAM Toolbox, and desktop packages.
+
+See [docs/browser_demo.md](docs/browser_demo.md) for details and troubleshooting notes.
+
 ## What It Demonstrates
 
 - Differential-drive robot simulation in Gazebo
@@ -131,6 +151,7 @@ ros2 launch vision_guided_robot demo_nav2_slam_map.launch.py rviz:=true
 Start here if you are reviewing the project:
 
 - [docs/project_portfolio.md](docs/project_portfolio.md): polished project summary, architecture, evidence, and limitations
+- [docs/browser_demo.md](docs/browser_demo.md): run the ROS 2/Gazebo demo in a browser with Docker and noVNC
 - [docs/github_showcase.md](docs/github_showcase.md): how to record and publish a GitHub demo clip
 - [docs/status.md](docs/status.md): completed milestones and validation bags
 - [docs/autonomous_exploration.md](docs/autonomous_exploration.md): frontier exploration implementation and validation

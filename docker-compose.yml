@@ -1,0 +1,15 @@
+services:
+  robot-demo:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    image: vision-guided-robot:humble-desktop
+    container_name: vision-guided-robot-demo
+    ports:
+      - "6080:6080"
+    shm_size: "2gb"
+    environment:
+      AUTO_LAUNCH_DEMO: "1"
+      RESOLUTION: "1400x900"
+      LIBGL_ALWAYS_SOFTWARE: "1"
+      QT_X11_NO_MITSHM: "1"
